@@ -9,16 +9,15 @@ def decay(Ns,n):
 
     for i in range(n):
         Nsys[i]=1
+        ran = np.random.uniform(0,1,1)
+
         if Ns[i] == 2:
-            ran = np.random.uniform(0,1,1)
             Ns_ej[i] = 1 if ran>0.99 else 0
 
         elif Ns[i] == 3:
-            ran = np.random.uniform(0,1,1)
             Ns_ej[i] = 1 if ran<0.874 else 0
             
         elif Ns[i] == 4:
-            ran = np.random.uniform(0,1,1)
             if ran<=0.751:
                 # Binary and 2 ejected stars
                 Ns_ej[i] = 2
@@ -37,7 +36,6 @@ def decay(Ns,n):
                 Ns_ej[i] = 0 #but forms 2 binaries
 
         elif Ns[i] == 5:
-            ran = np.random.uniform(0,1,1)
             if ran<=0.532:
                 # Forms 1 binary and 3 singles
                 Ns_ej[i] = Ns[i] - 2
@@ -61,7 +59,6 @@ def decay(Ns,n):
                 Ns_ej[i] = 0
 
         elif Ns[i] == 6 or Ns[i]==7:
-            ran = np.random.uniform(0,1,1)
             if ran<=0.25:
                 # Forms 1 binary and 4/5 singles
                 Ns_ej[i] = Ns[i] - 2

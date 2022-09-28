@@ -8,7 +8,6 @@ from sys import exit
 from tqdm import tqdm
 # My modules
 from decay import *
-from binary_separation import *
 from plotting import *
 
 start_time = time.time()
@@ -66,15 +65,6 @@ def N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=True):
                 Ns[i]=np.random.randint(3,6,size=1)
             else:
                 Ns[i]=np.random.randint(3,7,size=1) if Mc[i]<50 else np.random.randint(4,8,size=1)
-
-    # elif mdep==True:
-    #     for i in range(n):
-    #         if Mc[i]<=1.0:
-    #             Ns[i]=np.random.randint(1,4,size=1)
-    #         elif 1.0<Mc[i]<5:
-    #             Ns[i]=np.random.randint(2,5,size=1)
-    #         else:# 5.<=Mc[i]<10:
-    #             Ns[i]=np.random.randint(3,6,size=1)
             
 
     # Calculate the number of stars based on M_be
@@ -188,20 +178,16 @@ def count_stars(Ns,Ns_ej,m_stars,M_p,m_sys,Nfin,Nsys,split):
     '''
     Getting the primary masses of each system
     '''
-    mmin=0.008
-    ind = len(np.where(m_stars<mtypes[2])[0])
+    mmin= 0.008#mtypes[0]
+    ind = len(np.where(m_stars<mtypes[0])[0])
     ind = ind if ind<Ns else 0
-    #ind=0
 
     # Add masses of all primary/single stars to an array
     # This is needed for the IMF, not the multiplicity fractions
     if Nsys==1:
         if m_stars[0]>mmin:
             M_p.append(m_stars[0])
-            #Nfin.append(Ns-Ns_ej)
             Nfin.append(Ns-max(ind,Ns_ej)) if m_stars[0]>mtypes[0] else Nfin.append(1)
-            # Counting all the ejected stars with M>0.008 as single
-            # If Ns_ej=0 then none appended
             
     elif Nsys>1:
         # For Nsys bound systems
@@ -233,42 +219,6 @@ def count_stars(Ns,Ns_ej,m_stars,M_p,m_sys,Nfin,Nsys,split):
     return(M_p,Nfin)
 
 
-def count_stars2(sep,Ns,Ns_ej,m_stars,M_res,M_p,Nfin,Nsys,split):
-    #M_p=[]
-    #Nfin=[]
-    #M_res=[]
-
-    # Add masses of all primary/single stars to an array
-    # This is needed for the IMF, not the multiplicity fractions
-    if Nsys==1:
-        if m_stars[0]>0.01:
-            M_p.append(m_stars[0])
-            Nfin.append(Ns-Ns_ej)
-            # Counting all the ejected stars with M>0.008 as single
-            # If Ns_ej=0 then none appended
-            
-    elif Nsys>1:
-        # For Nsys bound systems
-        for x in range(Nsys-1):
-            if m_stars[split[0]]>0.01:
-                M_p.append(m_stars[split[0]-1])
-                #if sep<0:
-                M_res.append(sum(m_stars[:-(Ns_ej+1)]))
-                #else:
-                #    [M_res.append(m_stars[i]) for i in range(Ns-Ns_ej)] 
-                Nfin.append(split[x])
-
-    # Sort out the ejected stars as well
-    # If there are none then 'for i in range(0)'
-    for j in range(Ns_ej):
-        if m_stars[-(j+1)]>0.01:
-            M_p.append(m_stars[-(j+1)])
-            M_res.append(m_stars[-(j+1)])
-            Nfin.append(1)
-
-    return(M_res,Nfin)
-
-
 # Get the mass ratio distribution for M, G, and A stars
 def mass_ratio(m1,m2,q_m,q_g,q_a):
     # Append to list representing the correct mass range
@@ -283,7 +233,6 @@ def main(Mc,Ns,Ns_ej,eta,SFE):
     Nfin = []
     m_stars_all = []
     m_sys = []
-    M_res = []
     # Mass-ratio distribution lists
     q_m = []
     q_g = []
@@ -299,8 +248,6 @@ def main(Mc,Ns,Ns_ej,eta,SFE):
         #     count+=1
         m_stars = get_masses(Mc[i],Ns[i],eta,m_stars_all,m_sys,SFE)
         M_p,Nfin = count_stars(Ns[i],Ns_ej[i],m_stars,M_p,m_sys,Nfin,Nsys[i],split[i])
-        #sep = get_sep(m_stars[0])
-        #M_res,Nfin = count_stars2(sep,Ns[i],Ns_ej[i],m_stars,M_res,M_p,Nfin,Nsys[i],split[i])
     
         if len(m_stars)>1:
             mass_ratio(m_stars[0],m_stars[1],q_m,q_g,q_a) 
@@ -332,16 +279,13 @@ def multiplicity(Nmin,Nmax,mult):
 
     mult_df = pd.DataFrame(mult,#index=["N=1","N=2","N=3","N=4","N=5","N=6","N=7"],
               columns=stypes)
-    
-    #print(" ")
-    #print(mult_df)
+
     Gs = mult_df["G"].sum(axis=1)
     Gs = 100*Gs/sum(Gs)
     As = mult_df["A"]#.sum(axis=0)
     As = 100*As/sum(As)
-    print(" ")
-    print("The ratio of G type stars is: {} : {} : {} : {}".format(round(Gs[0],1),round(Gs[1],1),round(Gs[2],1),round(Gs[3],1)))
-    print("The ratio of A type stars is: {} : {} : {} : {}".format(round(As[0],1),round(As[1],1),round(As[2],1),round(As[3],1)))
+    #print("The ratio of G type stars is: {} : {} : {} : {}".format(round(Gs[0],1),round(Gs[1],1),round(Gs[2],1),round(Gs[3],1)))
+    #print("The ratio of A type stars is: {} : {} : {} : {}".format(round(As[0],1),round(As[1],1),round(As[2],1),round(As[3],1)))
 
     return(MF,CSF,THF)#,ratios)
 
@@ -370,7 +314,7 @@ Nmin = 2
 Nmax = 7
 
 # Number of stars
-Ns = N_stars(Nmin,Nmax,n,M_be,random=False,mdep=True,mbe=False)
+Ns = N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=False)
 
 # Number of ejected stars
 Ns_ej = N_ejected(n,Ns,random=True,rule=False)
@@ -379,7 +323,7 @@ split = []
 [split.append([1]) for i in range(n)]
 
 # Ejected stars using the Sterzik and Durisen decay probabilities
-Ns_ej,Nsys,split = decay(Ns,n)
+#Ns_ej,Nsys,split = decay(Ns,n)
 
 # arr = np.array([Ns,Ns_ej])
 # arr = np.swapaxes(arr,0,1)
