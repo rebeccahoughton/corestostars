@@ -66,8 +66,10 @@ def MF_CSF(ndim,fractions,horizontal=True):
         ax[j*2].errorbar(  x, MF_obs,xerr=x_err, yerr=MF_yerr,color="k",marker="s",ms=5,markerfacecolor="b",label="MF",ls=' ',capsize=1.2,lw=1.0)
         ax[j*2+1].errorbar(x,CSF_obs,xerr=x_err,yerr=CSF_yerr,color="k",marker="s",ms=5,markerfacecolor="limegreen",label="CSF",ls=' ',capsize=1.2,lw=1.0)#,lw=2.0)
         ax[j*2].errorbar(  x,THF_obs,xerr=x_err,yerr=THF_yerr,color="k",marker="o",ms=5,markerfacecolor="r",label="THF",ls=' ',capsize=1.2,lw=1.0)
-        ax[j*2].legend(loc="upper left")
-        ax[j*2+1].legend(loc="upper left")
+    
+    # Legend on top plot only
+    ax[0].legend(loc="upper left")
+    ax[1].legend(loc="upper left")
 
     # Formatting
     for i in range(2*ndim):
