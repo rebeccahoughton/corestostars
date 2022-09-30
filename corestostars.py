@@ -58,13 +58,13 @@ def N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=True):
     elif mdep==True:
         for i in range(n):
             if Mc[i]<=1.0:
-                Ns[i]=np.random.randint(1,4,size=1)
+                Ns[i]=np.random.randint(2,4,size=1)
             elif 1.0<Mc[i]<8:
                 Ns[i]=np.random.randint(2,5,size=1)
             elif 8<=Mc[i]<17:# 5.<=Mc[i]<10:
                 Ns[i]=np.random.randint(3,6,size=1)
             else:
-                Ns[i]=np.random.randint(3,7,size=1) if Mc[i]<50 else np.random.randint(4,8,size=1)
+                Ns[i]=np.random.randint(3,7,size=1)# if Mc[i]<50 else np.random.randint(4,8,size=1)
             
 
     # Calculate the number of stars based on M_be
@@ -92,7 +92,7 @@ def N_ejected(n,Ns,random=True,rule=False):
                 Ns_ej[i]=0 if Ns[i]==0 else np.random.randint(0,Ns[i],1)
         else:
             for i in range(n):
-                Ns_ej[i] = np.random.randint(0,Ns[i],1)# if Ns[i]>2 else 0
+                Ns_ej[i] = np.random.randint(0,Ns[i],1) if Ns[i]>2 else 0
 
     elif rule==True:
         # Manually defining the number of ejected stars
@@ -108,7 +108,7 @@ def N_ejected(n,Ns,random=True,rule=False):
                 Ns_ej[i] = 2 if ran>0.5 else 1
             elif 2 <= Ns[i] <= 3:
                 ran = np.random.uniform(size=1)
-                Ns_ej[i] = 1 if ran>0.1 else 0
+                Ns_ej[i] = 1# if ran>0.1 else 0
             # elif 4>Ns[i]>=2 and ran>0.3:
             #     Ns_ej[i] = 1
             else:
@@ -175,7 +175,7 @@ def get_masses(Mc,Ns,eta,m_stars_all,m_sys,SFE):
 
 # Counting the stars for when high order systems decay into two multiple systems
 def count_stars(Ns,Ns_ej,m_stars,M_p,m_sys,Nfin,Nsys,split):
-    
+
     '''
     Getting the primary masses of each system, and the final number of stars
     once some companions have been ejected. We use mmin to define the 
@@ -301,7 +301,7 @@ def multiplicity(Nmin,Nmax,mult):
 #---------------------START OF PROGRAM-----------------------------
 #------------------------------------------------------------------
 np.random.seed(625)
-n = int(1e5)  #Number of cores
+n = int(1e6)  #Number of cores
 
 #Star formation efficiency
 
@@ -320,10 +320,10 @@ Nmin = 2
 Nmax = 7
 
 # Number of stars
-Ns = N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=False)
+Ns = N_stars(Nmin,Nmax,n,M_be,random=False,mdep=True,mbe=False)
 
 # Number of ejected stars
-Ns_ej = N_ejected(n,Ns,random=True,rule=False)
+Ns_ej = N_ejected(n,Ns,random=False,rule=True)
 Nsys = np.ones((n))
 split = []
 [split.append([1]) for i in range(n)]
@@ -340,12 +340,12 @@ split = []
 
 # Multiplicity plots
 ndim = 1
-ndim2= 4
+ndim2= 1
 
 x = mtypes[:-1] + np.diff(mtypes)/2
 
 etas = [0.3,0.6,0.9,r"$U\rm{[0,1]}$"]
-#etas = [0.5]
+etas = [0.6]
 lss = [(0,(5,1)),"dotted","dashed","dashdot"]
 SFES = ["fixed","fixed","fixed","random"]
 
@@ -365,13 +365,13 @@ y_CMF, x_CMF =np.histogram(np.log10( Mc),25,density=True)
 ax1.plot(10**x_CMF[:-1],y_CMF*0.2,label="CMF",c="k",lw=1.5,alpha=0.8)
 ax2.plot(10**x_CMF[:-1],y_CMF*0.2,label="CMF",c="k",lw=1.5,alpha=0.8)
 
-# Nmin = [1,1,2,2,2,3]
-# Nmax = [6,7,6,7,8,7]
+# Nmin_arr = [1,1,2,2,2,3,3]
+# Nmax_arr = [6,7,6,7,8,7,8]
 
 for i in range(ndim2):
     # for j in range(ndim):
-    #     Nmin = 1+j
-    #     Nmax = 5+j
+    #     Nmin = Nmin_arr[j]#1+j
+    #     Nmax = Nmax_arr[j]#5+j
 
     #     Ns = N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=False)
 
@@ -390,9 +390,9 @@ for i in range(ndim2):
     #Multiplicities
     MF,CSF,THF=multiplicity(Nmin,Nmax,mult)
 
-        # ax[j*2].plot(x,MF,c="b",label="MF",lw=1.5,alpha=0.8)
-        # ax[j*2].plot(x,THF,c="r",label="THF",lw=1.5,alpha=0.8)
-        # ax[j*2+1].plot(x,CSF,c="g",label="CSF",lw=1.5,alpha=0.8)
+        # ax[j*2].plot(x,MF,c="b",label="MF",lw=1.5,alpha=0.8,ls=lss[i])
+        # ax[j*2].plot(x,THF,c="r",label="THF",lw=1.5,alpha=0.8,ls=lss[i])
+        # ax[j*2+1].plot(x,CSF,c="g",label="CSF",lw=1.5,alpha=0.8,ls=lss[i])
 
     ax[0].plot(x,MF,c=cols[i],label="MF",ls=lss[i],lw=1.5)
     ax[0].plot(x,THF,c=cols[i+4],label="THF",ls=lss[i],lw=1.5)
@@ -409,7 +409,7 @@ for i in range(ndim2):
 # save = input("Save multiplicity plot? (y/n) ")
 # if save=="yes" or save=="Yes" or save=="y":
 #     fname = input("File name:")
-# fname = "mult_mbe.pdf"
+# fname = "IMF_hybrid.pdf"
 # plt.savefig(fname,bbox_inches='tight')
 #     plt.show()
 # elif save=="No" or save=="n":
