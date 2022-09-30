@@ -148,7 +148,7 @@ def IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=Tru
     #ax[0].set_title("IMF (System)",fontsize=title_size,**font)
     #ax[1].set_title("IMF (All stars)",fontsize=title_size,**font)
     c = 3 if horizontal==True else 0
-    ax[0].text(16-c,0.25,"System IMF")
+    ax[0].text(13-c,0.25,"System IMF")
     ax[1].text(6-c,0.25,"Individual star IMF")
 
     ax[0].set_ylabel("dN/dlog M",fontsize=label_size,**font)

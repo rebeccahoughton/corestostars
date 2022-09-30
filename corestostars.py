@@ -175,19 +175,25 @@ def get_masses(Mc,Ns,eta,m_stars_all,m_sys,SFE):
 
 # Counting the stars for when high order systems decay into two multiple systems
 def count_stars(Ns,Ns_ej,m_stars,M_p,m_sys,Nfin,Nsys,split):
+    
     '''
-    Getting the primary masses of each system
+    Getting the primary masses of each system, and the final number of stars
+    once some companions have been ejected. We use mmin to define the 
+    minimum mass of stars we want included in the IMF and mmin_comp to
+    define the minimum mass of the companions we want included in the 
+    multiplicity statistics. 
     '''
-    mmin= 0.008#mtypes[0]
-    ind = len(np.where(m_stars<mtypes[0])[0])
-    ind = ind if ind<Ns else 0
+
+    mmin = 0.001
+    mmin_comp = mtypes[2]
+    ind = len(np.where(m_stars<mmin_comp)[0])
+    ind = ind if ind<Ns else Ns-1
 
     # Add masses of all primary/single stars to an array
-    # This is needed for the IMF, not the multiplicity fractions
     if Nsys==1:
         if m_stars[0]>mmin:
             M_p.append(m_stars[0])
-            Nfin.append(Ns-max(ind,Ns_ej)) if m_stars[0]>mtypes[0] else Nfin.append(1)
+            Nfin.append(Ns-max(ind,Ns_ej)) if m_stars[0]>mtypes[3] else Nfin.append(Ns-Ns_ej)
             
     elif Nsys>1:
         # For Nsys bound systems
@@ -331,7 +337,6 @@ split = []
 # # print("Array of Ns_ej values when Ns=2:",arr[inds,1])
 # print("mean ejected stars when Ns=4: {}".format(np.mean(arr[inds,1])))
 # exit()
-
 
 # Multiplicity plots
 ndim = 1
