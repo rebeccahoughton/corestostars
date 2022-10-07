@@ -92,7 +92,7 @@ def N_ejected(n,Ns,random=True,rule=False):
                 Ns_ej[i]=0 if Ns[i]==0 else np.random.randint(0,Ns[i],1)
         else:
             for i in range(n):
-                Ns_ej[i] = np.random.randint(0,Ns[i],1) if Ns[i]>2 else 0
+                Ns_ej[i] = np.random.randint(0,Ns[i],1)# if Ns[i]>2 else 0
 
     elif rule==True:
         # Manually defining the number of ejected stars
@@ -320,10 +320,10 @@ Nmin = 2
 Nmax = 7
 
 # Number of stars
-Ns = N_stars(Nmin,Nmax,n,M_be,random=False,mdep=True,mbe=False)
+Ns = N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=False)
 
 # Number of ejected stars
-Ns_ej = N_ejected(n,Ns,random=False,rule=True)
+Ns_ej = N_ejected(n,Ns,random=True,rule=False)
 Nsys = np.ones((n))
 split = []
 [split.append([1]) for i in range(n)]
@@ -340,12 +340,12 @@ split = []
 
 # Multiplicity plots
 ndim = 1
-ndim2= 1
+ndim2= 4
 
 x = mtypes[:-1] + np.diff(mtypes)/2
 
 etas = [0.3,0.6,0.9,r"$U\rm{[0,1]}$"]
-etas = [0.6]
+#etas = [0.6]
 lss = [(0,(5,1)),"dotted","dashed","dashdot"]
 SFES = ["fixed","fixed","fixed","random"]
 
@@ -355,10 +355,10 @@ cols = ["midnightblue","mediumblue","dodgerblue","cyan","darkred","red","oranger
         "darkgreen","green","forestgreen","limegreen"]
 
 # Generating multiplicity plot
-ax = MF_CSF(ndim,fractions,horizontal=True)
+figMF,ax = MF_CSF(ndim,fractions,horizontal=False)
 
 # Plotting the IMFs   
-ax1,ax2 = IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=True)
+figIMF,ax1,ax2 = IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=False)
 
 #CMF
 y_CMF, x_CMF =np.histogram(np.log10( Mc),25,density=True)
@@ -409,8 +409,8 @@ for i in range(ndim2):
 # save = input("Save multiplicity plot? (y/n) ")
 # if save=="yes" or save=="Yes" or save=="y":
 #     fname = input("File name:")
-# fname = "IMF_hybrid.pdf"
-# plt.savefig(fname,bbox_inches='tight')
+# figMF.savefig("mult_random.pdf",bbox_inches='tight')
+# figIMF.savefig("IMF_random.pdf",bbox_inches='tight')
 #     plt.show()
 # elif save=="No" or save=="n":
 #     plt.show()
