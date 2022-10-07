@@ -1,6 +1,7 @@
 # My files to ignore
 imf_master/
 figures/
+figures_paper/
 
 
 # Byte-compiled / optimized / DLL files
