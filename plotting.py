@@ -90,7 +90,7 @@ def MF_CSF(ndim,fractions,horizontal=True):
         plt.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
         axa.set_ylabel("Companion Star Fraction",labelpad=-1)
     
-    return(ax)
+    return(fig,ax)
 
 
 def IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=True):
@@ -109,7 +109,8 @@ def IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=Tru
     ind_s=np.where(mass>0.3)[0][0]
     ind_k=np.where(mass>0.01)[0][0]
 
-    cols = ["orange","lawngreen","mediumseagreen"]
+    #cols = ["orange","lawngreen","mediumseagreen"]
+    cols = ["#CE3E05","#009E73","#E69F00"]
 
     if horizontal==True:
         fig,ax = plt.subplots(1,2,figsize=[10,4],sharey=True,gridspec_kw={'hspace':0,'wspace':0.1})
@@ -126,15 +127,15 @@ def IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=Tru
     # Actually doing the plotting
     for i in range(2):
         ax[i].plot(mass[ind_s:],(salpeter(mass,integral_form=False)[ind_s:])*mass[ind_s:]/np.log(10),
-                   label="Salpeter55",lw=4.5,alpha=0.6,color=cols[0]) if Salpeter==True else None
+                   label="Salpeter55",lw=4.7,alpha=0.6,color=cols[0]) if Salpeter==True else None
         ax[i].plot(mass[ind_k:],(kroupa(mass,integral_form=False)[ind_k:])*mass[ind_k:]/np.log(10),
-                   label="Kroupa01",lw=4.5,alpha=0.6,color=cols[1]) if Kroupa==True else None
+                   label="Kroupa01",lw=4.7,alpha=0.6,color=cols[1]) if Kroupa==True else None
         #ax.plot(mass,(chabrier2005(mass,integral_form=False))*mass/np.log(10),label="Chabrier05",
         #          lw=4.5,alpha=0.4,color=cols[2]) if Chabrier05==True else None
         
         #Slightly more involved for the Maschberger IMF
         y_masch, x_masch =np.histogram(np.log10(masch),25,density=True)
-        ax[i].plot(10**x_masch[:-1],y_masch*0.2,label="Masch13",alpha=0.6,lw=4.5,c=cols[2]) if Masch==True else None
+        ax[i].plot(10**x_masch[:-1],y_masch*0.2,label="Masch13",alpha=0.6,lw=4.7,c=cols[2]) if Masch==True else None
         
         #Setup
         ax[i].tick_params(axis="both",which="both",direction="in",top=True,right=True,labelsize=12,pad=4.2)
@@ -148,9 +149,9 @@ def IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=Tru
     #ax[0].set_title("IMF (System)",fontsize=title_size,**font)
     #ax[1].set_title("IMF (All stars)",fontsize=title_size,**font)
     c = 3 if horizontal==True else 0
-    ax[0].text(13-c,0.25,"System IMF")
-    ax[1].text(6-c,0.25,"Individual star IMF")
+    ax[0].text(13-c,0.25,"System IMF",fontsize=11)
+    ax[1].text(4.5,0.25,"Individual star IMF",fontsize=11)
 
     ax[0].set_ylabel("dN/dlog M",fontsize=label_size,**font)
 
-    return(ax[0],ax[1])
+    return(fig,ax[0],ax[1])
