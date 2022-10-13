@@ -2,6 +2,7 @@
 imf_master/
 figures/
 figures_paper/
+smalln_testing.py
 
 
 # Byte-compiled / optimized / DLL files
