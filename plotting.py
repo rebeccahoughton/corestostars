@@ -34,10 +34,12 @@ def MF_CSF(ndim,fractions,horizontal=True):
     #colors = plt.cm.jet(np.linspace(0,1,len(fractions[:,0])))
 
     if horizontal==False:
-        fig,ax = plt.subplots(2,1,figsize=[5,8],sharex=True,gridspec_kw={'hspace':0.07,'wspace':0.0})
-        ax[0].set_ylabel(r"$\bf{Multiplicity}$ / Triple High-order Fractions",labelpad=-0.5)
-        ax[1].set_ylabel("Companion Star Fraction",labelpad=-0.5)
-        ax[1].set_xlabel(r"Primary Mass ($M_\odot$)",labelpad=-0.5)
+        fig,ax = plt.subplots(2,1,figsize=[5,7],sharex=True,gridspec_kw={'hspace':0.0,'wspace':0.0})
+        ax[0].set_ylabel("Multiplicity / \n Triple High-order Fractions",fontsize=label_size)#,labelpad=-0.5)
+        ax[1].set_ylabel("Companion Star Fraction",fontsize=label_size)#,labelpad=-0.5)
+        ax[1].set_xlabel(r"Primary Mass ($M_\odot$)",fontsize=label_size)#,labelpad=-0.5)
+        ax[0].set_ylim(-0.05,1.1)
+        ax[1].set_ylim(-0.15,2.7)
     else:
         fig,ax = plt.subplots(ndim,2,figsize=[10,4*ndim],sharex=True,gridspec_kw={'hspace':0,'wspace':0.2})
     fig.get_constrained_layout()
@@ -68,27 +70,27 @@ def MF_CSF(ndim,fractions,horizontal=True):
         ax[j*2].errorbar(  x,THF_obs,xerr=x_err,yerr=THF_yerr,color="k",marker="o",ms=5,markerfacecolor="r",label="THF",ls=' ',capsize=1.2,lw=1.0)
     
     # Legend on top plot only
-    ax[0].legend(loc="upper left")
-    ax[1].legend(loc="upper left")
+    ax[0].legend(loc="upper left",fontsize=label_size)
+    ax[1].legend(loc="upper left",fontsize=label_size)
 
     # Formatting
     for i in range(2*ndim):
         ax[i].set_xscale("log")
-        ax[i].tick_params(axis="both",which="both",direction="in",top=True,right=True)
+        ax[i].tick_params(axis="both",which="both",direction="in",top=True,right=True,labelsize=12)
 
     if horizontal==True:
-        ax[-1].set_xlabel(r"Primary Mass ($M_\odot$)",labelpad=-0.5)
-        ax[-2].set_xlabel(r"Primary Mass ($M_\odot$)",labelpad=-0.5)
+        ax[-1].set_xlabel(r"Primary Mass ($M_\odot$)")#,labelpad=-0.5)
+        ax[-2].set_xlabel(r"Primary Mass ($M_\odot$)")#,labelpad=-0.5)
 
         # Gets the labels right when adding extra rows of subplots
         fig.add_subplot(111, frameon=False)
         # Hide tick and tick label of the big axis
         plt.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
-        plt.ylabel(r"$\bf{Multiplicity}$ / Triple High-order Fractions",labelpad=-1)
+        plt.ylabel(r"$\bf{Multiplicity}$ / Triple High-order Fractions",labelpad=-0.5)
         axa = fig.add_subplot(122, frameon=False)
         # Hide tick and tick label of the big axis
         plt.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
-        axa.set_ylabel("Companion Star Fraction",labelpad=-1)
+        axa.set_ylabel("Companion Star Fraction")#,labelpad=-0.5)
     
     return(fig,ax)
 
@@ -110,7 +112,7 @@ def IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=Tru
     ind_k=np.where(mass>0.01)[0][0]
 
     #cols = ["orange","lawngreen","mediumseagreen"]
-    cols = ["#CE3E05","#009E73","#E69F00"]
+    cols = ["#f5591b","#009E73","#E69F00"]
 
     if horizontal==True:
         fig,ax = plt.subplots(1,2,figsize=[10,4],sharey=True,gridspec_kw={'hspace':0,'wspace':0.1})
@@ -127,7 +129,7 @@ def IMF_plot(Masch=True,Kroupa=True,Salpeter=True,Chabrier05=True,horizontal=Tru
     # Actually doing the plotting
     for i in range(2):
         ax[i].plot(mass[ind_s:],(salpeter(mass,integral_form=False)[ind_s:])*mass[ind_s:]/np.log(10),
-                   label="Salpeter55",lw=4.7,alpha=0.6,color=cols[0]) if Salpeter==True else None
+                   label="Salpeter55",lw=4.7,alpha=0.5,color=cols[0]) if Salpeter==True else None
         ax[i].plot(mass[ind_k:],(kroupa(mass,integral_form=False)[ind_k:])*mass[ind_k:]/np.log(10),
                    label="Kroupa01",lw=4.7,alpha=0.6,color=cols[1]) if Kroupa==True else None
         #ax.plot(mass,(chabrier2005(mass,integral_form=False))*mass/np.log(10),label="Chabrier05",
