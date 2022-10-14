@@ -58,13 +58,24 @@ def N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=True):
     elif mdep==True:
         for i in range(n):
             if Mc[i]<=1.0:
-                Ns[i]=np.random.randint(2,4,size=1)
-            elif 1.0<Mc[i]<8:
+                Ns[i]=np.random.randint(1,4,size=1)
+            elif 1.0<Mc[i]<5.0:
                 Ns[i]=np.random.randint(2,5,size=1)
-            elif 8<=Mc[i]<17:# 5.<=Mc[i]<10:
+            elif 5.0<=Mc[i]<20:# 5.<=Mc[i]<10:
                 Ns[i]=np.random.randint(3,6,size=1)
             else:
-                Ns[i]=np.random.randint(3,7,size=1)# if Mc[i]<50 else np.random.randint(4,8,size=1)
+                Ns[i]=np.random.randint(3,7,size=1) if Mc[i]<50 else np.random.randint(4,8,size=1)
+
+    # elif mdep==True:
+    #     for i in range(n):
+    #         if Mc[i]<=1.0:
+    #             Ns[i]=np.random.randint(2,4,size=1)
+    #         elif 1.0<Mc[i]<8:
+    #             Ns[i]=np.random.randint(2,5,size=1)
+    #         elif 8<=Mc[i]<17:# 5.<=Mc[i]<10:
+    #             Ns[i]=np.random.randint(3,6,size=1)
+    #         else:
+    #             Ns[i]=np.random.randint(4,6,size=1)# if Mc[i]<50 else np.random.randint(4,8,size=1)
             
 
     # Calculate the number of stars based on M_be
@@ -197,10 +208,12 @@ def count_stars(Ns,Ns_ej,m_stars,M_p,m_sys,Nfin,Nsys,split):
             
     elif Nsys>1:
         # For Nsys bound systems
-        for x in range(Nsys-1):
+        split_ind=0
+        for x in range(Nsys):
             if m_stars[split[0]]>mmin:
-                M_p.append(m_stars[split[0]-1])
+                M_p.append(m_stars[split_ind])
                 Nfin.append(split[x])
+            split_ind=split[x]
 
     # Sort out the ejected stars as well
     for j in range(Ns_ej):
@@ -301,14 +314,14 @@ def multiplicity(Nmin,Nmax,mult):
 #---------------------START OF PROGRAM-----------------------------
 #------------------------------------------------------------------
 np.random.seed(625)
-n = int(1e6)  #Number of cores
+n = int(1e5)  #Number of cores
 
 #Star formation efficiency
 
 #Bonnor-Ebert Mass
 #M_be = np.full((n),0.6)
 #M_be = np.random.normal(loc=1.0,scale=0.2,size=n)
-#M_be = np.random.uniform(0.4,2.5,n)
+M_be = np.random.uniform(0.5,2.5,n)
 
 # Generate core masses from the Maschberger IMF
 # For the L3 form of the IMF, parameters are 2.3, 1.4, 0.2, 0.01, 150
@@ -317,10 +330,10 @@ Mc = maschberger(2.3,1.9,1.0,0.05,300,n)
 
 # Defining variables
 Nmin = 2
-Nmax = 7
+Nmax = 6
 
 # Number of stars
-Ns = N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=False)
+Ns = N_stars(Nmin,Nmax,n,M_be,random=False,mdep=True,mbe=False)
 
 # Number of ejected stars
 Ns_ej = N_ejected(n,Ns,random=True,rule=False)
@@ -329,7 +342,7 @@ split = []
 [split.append([1]) for i in range(n)]
 
 # Ejected stars using the Sterzik and Durisen decay probabilities
-#Ns_ej,Nsys,split = decay(Ns,n)
+Ns_ej,Nsys,split = decay(Ns,n)
 
 # arr = np.array([Ns,Ns_ej])
 # arr = np.swapaxes(arr,0,1)
@@ -344,13 +357,15 @@ ndim2= 4
 
 x = mtypes[:-1] + np.diff(mtypes)/2
 
-etas = [0.3,0.6,0.9,r"$U\rm{[0,1]}$"]
+etas = [0.3,0.5,0.9,r"$U\rm{[0,1]}$"]
 #etas = [0.6]
 lss = [(0,(5,1)),"dotted","dashed","dashdot"]
+
+lss = [(0,(5,1)),(0,(3,1.5,1,1.5,1,1.5)),"dashed","dashdot"]
 SFES = ["fixed","fixed","fixed","random"]
 
 #Colours for IMFs with different eta values
-cols2 = ["blue","purple","magenta","red"]
+cols2 = ["blue","purple","#c904c9","red"]
 cols = ["midnightblue","mediumblue","dodgerblue","cyan","darkred","red","orangered","orange",
         "darkgreen","green","forestgreen","limegreen"]
 
@@ -403,17 +418,11 @@ for i in range(ndim2):
     ax1.plot(10**x_IMF[:-1],y_IMF*0.2,label=r"IMF: $\eta$={}".format(etas[i]),ls=lss[i],color=cols2[i])
     # Single star IMF
     y_IMF, x_IMF =np.histogram(np.log10(m_stars_all),25,density=True)
-    ax2.plot(10**x_IMF[:-1],y_IMF*0.2,label="IMF, SFE={}".format(etas[i]),ls=lss[i],color=cols2[i])
-    ax2.legend(loc="lower left",ncol=2,columnspacing=0.8,fontsize=9.5)#,bbox_to_anchor=[0.4,0.0])
+    ax2.plot(10**x_IMF[:-1],y_IMF*0.2,label=r"IMF, $\eta$={}".format(etas[i]),ls=lss[i],color=cols2[i])
+    ax2.legend(loc="lower left",ncol=2,columnspacing=0.8,labelspacing=0.4,fontsize=9.5)#,bbox_to_anchor=[0.4,0.0])
 
-# save = input("Save multiplicity plot? (y/n) ")
-# if save=="yes" or save=="Yes" or save=="y":
-#     fname = input("File name:")
-# figMF.savefig("mult_random.pdf",bbox_inches='tight')
-# figIMF.savefig("IMF_random.pdf",bbox_inches='tight')
-#     plt.show()
-# elif save=="No" or save=="n":
-#     plt.show()
+# figMF.savefig("mult_sd.pdf",bbox_inches='tight')
+# figIMF.savefig("IMF_sd.pdf",bbox_inches='tight')
 
 # Mass-ratio distributions
 # fig,ax = plt.subplots()
