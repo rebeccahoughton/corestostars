@@ -185,7 +185,7 @@ def count_stars(Ns,Ns_ej,m_stars,M_p,m_sys,Nfin,Nsys,split):
     '''
 
     mmin = 0.001
-    mmin_comp = mtypes[2]
+    mmin_comp = 0.001#0.2*m_stars[0]
     ind = len(np.where(m_stars<mmin_comp)[0])
     ind = ind if ind<Ns else Ns-1
 
@@ -306,7 +306,7 @@ n = int(1e6)  #Number of cores
 #Star formation efficiency
 
 #Bonnor-Ebert Mass
-M_be = np.full((n),1.5)
+#M_be = np.full((n),0.6)
 #M_be = np.random.normal(loc=1.0,scale=0.2,size=n)
 #M_be = np.random.uniform(0.4,2.5,n)
 

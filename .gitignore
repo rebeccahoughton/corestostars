@@ -3,6 +3,9 @@ imf_master/
 figures/
 figures_paper/
 smalln_testing.py
+extrapolate.py
+multiplicities
+sd_decay_probabilities
 
 
 # Byte-compiled / optimized / DLL files
