@@ -12,7 +12,7 @@ def decay(Ns,n):
         ran = np.random.uniform(0,1,1)
 
         if Ns[i] == 2:
-            Ns_ej[i] = 0#1 if ran>0.95 else 0
+            Ns_ej[i] = 0# if ran>0.7 else 0
 
         elif Ns[i] == 3:
             Ns_ej[i] = 1 if ran<0.874 else 0
