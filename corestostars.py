@@ -20,7 +20,6 @@ label_size="12"
 #For plotting multiplicities 
 stypes = [ "Y",  "T",  "L", "M","K","G", "G","F","A","B","B","O"]
 mtypes = [0.02,0.055,0.075,0.15,0.3,0.6,1.00,1.5,2.4,  5,  8, 17,50]
-#mtypes = [0.02,0.055,0.08,0.1,0.15,0.3,0.65,1.25,1.6,2.5,5.0,8.0,17,50]
 
 #Open multiplicities file
 fractions = np.loadtxt("multiplicities",usecols=(0,1,2,3,4,5,6,7),skiprows=2)
@@ -72,8 +71,8 @@ def N_stars(Nmin,Nmax,n,M_be,random=True,mdep=False,mbe=True):
     # Calculate the number of stars based on M_be
     elif mbe==True:
         for i in range(n):
-            Ns[i] = 0 if Mc[i]<M_be[i] else (Mc[i]/M_be[i]).astype(int)
-            Ns[i]=Nmax if Ns[i]>Nmax else Ns[i]
+            Ns[i] = 0    if Mc[i]<M_be[i] else (Mc[i]/M_be[i]).astype(int)
+            Ns[i] = Nmax if Ns[i]>Nmax    else Ns[i]
                 
     return(Ns)
 
@@ -125,6 +124,10 @@ def get_masses(Mc,Ns,eta,m_stars_all,m_sys,SFE):
     ratio distribution. 
     '''
 
+    # k=0
+    # while True:
+    #     k += 1
+
     # Set up zeroing arrays to start with
     m_temp = np.zeros((Ns))
     m_stars = np.zeros((Ns))
@@ -154,7 +157,14 @@ def get_masses(Mc,Ns,eta,m_stars_all,m_sys,SFE):
         m_stars = -np.sort(-m_temp*Mc*eta_new/sum(m_temp))
     elif SFE=="random":
         eta_new = np.random.uniform(low=0,high=1.0,size=1)
-        m_stars = -np.sort(-m_temp*Mc*eta_new/sum(m_temp)) 
+        m_stars = -np.sort(-m_temp*Mc*eta_new/sum(m_temp))
+
+        # if min(m_stars)>0.01:
+        #     break 
+
+        # if k>5000:
+        #     break
+
 
     # Add to a list of all stars
     [m_stars_all.append(m_stars[x]) for x in range(Ns)]
@@ -172,8 +182,8 @@ def count_stars(Ns,Ns_ej,m_stars,M_p,m_sys,Nfin,Nsys,split):
     multiplicity statistics. 
     '''
 
-    mmin = 0.001
-    mmin_comp = 0.012#0.2*m_stars[0]
+    mmin = 0.0001
+    mmin_comp = 0.0012#0.2*m_stars[0]
     ind = len(np.where(m_stars<mmin_comp)[0])
     ind = ind if ind<Ns else Ns-1
 
@@ -306,7 +316,7 @@ Nmin = 2
 Nmax = 7
 
 # Number of stars
-Ns = N_stars(Nmin,Nmax,n,M_be,random=False,mdep=False,mbe=False)
+Ns = N_stars(Nmin,Nmax,n,M_be,random=False,mdep=True,mbe=False)
 
 # Number of ejected stars
 Ns_ej = N_ejected(n,Ns,random=True,rule=False)
@@ -400,6 +410,18 @@ for i in range(ndim2):
 
 # figMF.savefig("mult_best.pdf",bbox_inches='tight')
 # figIMF.savefig("IMF_best_v2.pdf",bbox_inches='tight')
+
+# print("minimum mass stars:",np.sort(m_stars_all)[0:50])
+
+# Plotting the single star and system IMFs on the same plot for comparison
+i=3
+fig,ax = plt.subplots(figsize=[6,4])
+y_IMF, x_IMF =np.histogram(np.log10(m_sys),25,density=True)
+ax.plot(10**x_IMF[:-1],y_IMF/np.log(10),label=r"IMF sys: $\eta$={}".format(etas[i]),ls=lss[i],color="k")
+y_IMF, x_IMF =np.histogram(np.log10(m_stars_all),25,density=True)
+ax.plot(10**x_IMF[:-1],y_IMF/np.log(10),label=r"IMF, $\eta$={}".format(etas[i]),ls=lss[i],color="r")
+ax.set_xscale("log")
+ax.set_yscale('log')
 
 # Mass-ratio distributions
 # fig,ax = plt.subplots()
